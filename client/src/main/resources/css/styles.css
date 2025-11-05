@@ -1,0 +1,22 @@
+.root { -fx-font-family: "Inter", "Segoe UI", sans-serif; }
+
+.card { -fx-padding: 24; -fx-background-radius: 16; -fx-background-color: white;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 16, 0, 0, 4); }
+
+.appbar { -fx-padding: 12; -fx-background-color: linear-gradient(to right, #f8fafc, #ffffff); }
+
+.title { -fx-font-size: 22px; -fx-font-weight: 700; }
+.subtitle { -fx-font-size: 16px; -fx-font-weight: 600; }
+.muted { -fx-text-fill: #666; }
+.accent { -fx-text-fill: #0ea5e9; -fx-font-weight: 600; }
+
+.button.primary { -fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 10; }
+.button.primary:hover { -fx-background-color: #0284c7; }
+
+.button.danger { -fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 10; }
+.button.danger:hover { -fx-background-color: #b91c1c; }
+
+.button.ghost { -fx-background-color: transparent; -fx-border-color: #ddd; -fx-border-radius: 10; }
+
+.sequence { -fx-font-size: 28px; -fx-font-weight: 700; -fx-padding: 16; -fx-background-color: #0ea5e90f;
+    -fx-background-radius: 12; }

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+
+<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
+            fx:controller="client.ui.LobbyController"
+            stylesheets="@/css/styles.css">
+
+    <top>
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="appbar">
+            <Label text="Lobby" styleClass="title"/>
+            <Label text="|" styleClass="muted"/>
+            <Label text="Bạn:"/>
+            <Label fx:id="lblUser" styleClass="accent"/>
+            <HBox HBox.hgrow="ALWAYS"/>
+            <Button text="Leaderboard" onAction="#onLeaderboard" styleClass="ghost"/>
+            <Button text="Lịch sử đấu" onAction="#onHistory" styleClass="ghost"/>
+            <Button text="Logout" onAction="#onLogout" styleClass="danger"/>
+        </HBox>
+    </top>
+
+    <center>
+        <VBox spacing="8">
+            <padding>
+                <Insets top="16" right="16" bottom="16" left="16"/>
+            </padding>
+
+            <Label text="Người chơi online" styleClass="subtitle"/>
+            <ListView fx:id="lvOnline"/>
+        </VBox>
+    </center>
+</BorderPane>

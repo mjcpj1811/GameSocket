@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+    <?import javafx.scene.layout.*?>
+    <?import javafx.geometry.*?>
+    <?import javafx.scene.control.*?>
+
+    <VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
+          fx:controller="client.ui.GameController" spacing="10"
+          stylesheets="@/css/styles.css">
+
+        <padding>
+            <Insets top="16" right="16" bottom="16" left="16"/>
+        </padding>
+
+        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="appbar">
+            <Label text="Đấu trí nhớ" styleClass="title"/>
+            <HBox HBox.hgrow="ALWAYS"/>
+            <Label text="Bạn:"/>
+            <Label fx:id="lblYou" styleClass="accent"/>
+            <Label text="vs"/>
+            <Label text="Đối thủ:"/>
+            <Label fx:id="lblOpp" styleClass="accent"/>
+            <Button text="Thoát" fx:id="btnQuit" onAction="#onQuit" styleClass="danger"/>
+        </HBox>
+
+        <HBox spacing="24" alignment="CENTER_LEFT">
+            <Label fx:id="lblRound" styleClass="subtitle"/>
+            <Label fx:id="lblTimer" styleClass="muted"/>
+            <Label fx:id="lblInfo" styleClass="muted"/>
+        </HBox>
+
+        <Label fx:id="lblSeq" styleClass="sequence" alignment="CENTER" maxWidth="Infinity"/>
+
+        <HBox spacing="8">
+            <TextField fx:id="txtAnswer" promptText="Nhập lại chuỗi"/>
+            <Button text="Nộp" fx:id="btnSubmit" onAction="#onSubmit" styleClass="primary"/>
+        </HBox>
+
+    <TableView fx:id="tblRound" prefHeight="240">
+        <columns>
+            <TableColumn fx:id="colRound" text="Round"/>
+            <TableColumn fx:id="colSeq" text="Chuỗi"/>
+            <TableColumn fx:id="colYourAns" text="Của bạn"/>
+            <TableColumn fx:id="colOppAns" text="Đối thủ"/>
+            <TableColumn fx:id="colScore" text="Tỉ số"/>
+        </columns>
+    </TableView>
+    </VBox>
