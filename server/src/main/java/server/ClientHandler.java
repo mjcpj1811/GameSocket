@@ -132,7 +132,10 @@ public class ClientHandler implements Runnable {
     private void onLogout() {
         running = false;
         try {
-            socket.close(); // đóng chủ động để vòng lặp dừng
+            userDAO.setStatus(userId, Protocol.STATUS_OFFLINE);
+            hub.remove(userId);
+            broadcastOnline();
+            socket.close();
         } catch (IOException ignored) {}
     }
 
@@ -151,7 +154,7 @@ public class ClientHandler implements Runnable {
     }
 
     /** Broadcast danh sách online cho tất cả client */
-    private void broadcastOnline() {
+    public void broadcastOnline() {
         List<ClientHandler> snapshot = new ArrayList<>(hub.all().values());
         for (ClientHandler h : hub.all().values()) {
             try {
@@ -226,6 +229,8 @@ public class ClientHandler implements Runnable {
         var his = matchDAO.getHistoryByUser(userId);
         send(new Message(Protocol.HISTORY_DATA).put(Protocol.HISTORY, his));
     }
+
+    /** Xử lý thoát trận */
     private void onQuitMatch() {
         if (inGame && currentRoom != null) {
             currentRoom.playerQuit(userId);
@@ -233,17 +238,22 @@ public class ClientHandler implements Runnable {
             inGame = false;
             currentRoom = null;
         }
-
         broadcastOnline();
     }
-    /** Dọn dẹp khi client thoát hoặc mất kết nối */
+    /** Dọn dẹp khi client mất kết nối */
     private void cleanup() {
         try {
             if (userId != null) {
-
                 userDAO.setStatus(userId, Protocol.STATUS_OFFLINE);
                 hub.remove(userId);
-                broadcastOnline();
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(100);
+                        broadcastOnline();
+                    } catch (Exception e) {
+                        System.err.println("[Cleanup] broadcast failed: " + e.getMessage());
+                    }
+                }).start();
             }
         } catch (Exception e) {
             System.err.println("Cleanup error for " + username + ": " + e.getMessage());
