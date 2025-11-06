@@ -44,7 +44,6 @@ public class Connection implements AutoCloseable {
             while ((line = in.readLine()) != null) {
                 Message m = Message.fromJson(line);
 
-                // 1) Ưu tiên gói online update: cache + phát live cho mainListener nếu có
                 if (Protocol.ONLINE_UPDATE.equals(m.getType())) {
                     lastOnlineUpdate = m;
                     Consumer<Message> ml = mainListener;
@@ -55,14 +54,12 @@ public class Connection implements AutoCloseable {
                     continue;
                 }
 
-                // 2) Nếu có one-time listener đăng ký cho type này thì trả cho nó
                 Consumer<Message> cb = oneTime.remove(m.getType());
                 if (cb != null) {
                     cb.accept(m);
                     continue;
                 }
 
-                // 3) Đưa các gói game vào hàng đợi
                 String t = m.getType();
                 if (Protocol.ROUND_START.equals(t) ||
                         Protocol.ROUND_RESULT.equals(t) ||
@@ -71,7 +68,6 @@ public class Connection implements AutoCloseable {
                     continue;
                 }
 
-                // 4) Còn lại chuyển về mainListener (nếu có)
                 Consumer<Message> ml = mainListener;
                 if (ml != null) ml.accept(m);
             }

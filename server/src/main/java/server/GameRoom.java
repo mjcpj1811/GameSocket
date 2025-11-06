@@ -4,6 +4,7 @@ import common.Message;
 import common.Protocol;
 import server.dao.MatchDAO;
 import server.dao.RoundDAO;
+import server.dao.UserDAO;
 
 import java.security.SecureRandom;
 import java.util.*;
@@ -16,6 +17,7 @@ public class GameRoom {
     private final String matchId;
     private final MatchDAO matchDAO = new MatchDAO();
     private final RoundDAO roundDAO = new RoundDAO();
+    private final UserDAO userDAO = new UserDAO();
     private final SecureRandom rnd = new SecureRandom();
     private volatile boolean aborted = false;
 
@@ -46,8 +48,13 @@ public class GameRoom {
     }
 
     public void start() {
+        // ✅ Đánh dấu đang trong trận
         p1.setInGame(true, this);
         p2.setInGame(true, this);
+        userDAO.setStatus(p1.userId(), Protocol.STATUS_INGAME);
+        userDAO.setStatus(p2.userId(), Protocol.STATUS_INGAME);
+        p1.broadcastOnline();
+        p2.broadcastOnline();
 
         p1.notifyMatchStart(matchId, p2.username());
         p2.notifyMatchStart(matchId, p1.username());
@@ -134,14 +141,13 @@ public class GameRoom {
             try { Thread.sleep(100); } catch (InterruptedException ignored) {}
         }
     }
+
     public void playerQuit(String quitterId) {
         try {
-            aborted = true; // ✅ dừng trận
-
+            aborted = true;
             boolean quitterIsP1 = p1.userId().equals(quitterId);
             ClientHandler quitter = quitterIsP1 ? p1 : p2;
             ClientHandler winner  = quitterIsP1 ? p2 : p1;
-
 
             int winnerScore  = quitterIsP1 ? totalScore2 : totalScore1;
             double winnerTime = quitterIsP1 ? totalTime2 : totalTime1;
@@ -174,9 +180,12 @@ public class GameRoom {
         } finally {
             p1.setInGame(false, null);
             p2.setInGame(false, null);
+            userDAO.setStatus(p1.userId(), Protocol.STATUS_ONLINE);
+            userDAO.setStatus(p2.userId(), Protocol.STATUS_ONLINE);
+            p1.broadcastOnline();
+            p2.broadcastOnline();
         }
     }
-
 
     private void endMatch() {
         String winner = null;
@@ -191,12 +200,18 @@ public class GameRoom {
         matchDAO.saveMatchDetail(p1.userId(), matchId, totalScore1, totalTime1);
         matchDAO.saveMatchDetail(p2.userId(), matchId, totalScore2, totalTime2);
 
-        // Gửi kết quả
         sendMatchResult(p1, totalScore1, totalTime1, winner);
         sendMatchResult(p2, totalScore2, totalTime2, winner);
 
+        // ✅ Cập nhật trạng thái về ONLINE
         p1.setInGame(false, null);
         p2.setInGame(false, null);
+        userDAO.setStatus(p1.userId(), Protocol.STATUS_ONLINE);
+        userDAO.setStatus(p2.userId(), Protocol.STATUS_ONLINE);
+
+        // ✅ Cập nhật live danh sách online
+        p1.broadcastOnline();
+        p2.broadcastOnline();
     }
 
     private void sendMatchResult(ClientHandler player, int score, double time, String winner) {

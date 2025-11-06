@@ -81,7 +81,6 @@ public class ClientHandler implements Runnable {
                     case Protocol.GET_LEADERBOARD -> onLeaderboard();
                     case Protocol.GET_HISTORY -> onHistory();
                     case Protocol.QUIT_MATCH -> onQuitMatch();
-
                 }
             }
 
@@ -133,7 +132,10 @@ public class ClientHandler implements Runnable {
     private void onLogout() {
         running = false;
         try {
-            socket.close(); // đóng chủ động để vòng lặp dừng
+            userDAO.setStatus(userId, Protocol.STATUS_OFFLINE);
+            hub.remove(userId);
+            broadcastOnline();
+            socket.close();
         } catch (IOException ignored) {}
     }
 
@@ -141,18 +143,19 @@ public class ClientHandler implements Runnable {
     public void onListOnline() {
         var arr = hub.all().values().stream()
                 .filter(h -> !Objects.equals(h.userId, this.userId))
-                .map(h -> Map.of("id", h.userId, "username", h.username))
+                .map(h -> Map.of(
+                        "id", h.userId,
+                        "username", h.username,
+                        "status", h.inGame ? Protocol.STATUS_INGAME : Protocol.STATUS_ONLINE
+                ))
                 .collect(Collectors.toList());
 
         send(new Message(Protocol.ONLINE_UPDATE).put(Protocol.USERS, arr));
     }
 
     /** Broadcast danh sách online cho tất cả client */
-    private void broadcastOnline() {
-        // Chụp snapshot danh sách hiện tại để tránh ConcurrentModification
+    public void broadcastOnline() {
         List<ClientHandler> snapshot = new ArrayList<>(hub.all().values());
-
-        // Chạy việc gửi trên thread riêng để không đè luồng login
         for (ClientHandler h : hub.all().values()) {
             try {
                 h.onListOnline();
@@ -167,7 +170,12 @@ public class ClientHandler implements Runnable {
         String oppId = (String) m.getPayload().get(Protocol.OPP);
         ClientHandler opp = hub.findByUserId(oppId);
         if (opp == null) return;
-
+        if (opp.inGame) {
+            send(new Message(Protocol.CHALLENGE_RESP)
+                    .put(Protocol.ACCEPT, false)
+                    .put("opponent", opp.username + " đang trong trận đấu khác."));
+            return;
+        }
         opp.send(new Message(Protocol.CHALLENGE_REQ)
                 .put(Protocol.YOU, this.userId)
                 .put("name", this.username));
@@ -186,9 +194,19 @@ public class ClientHandler implements Runnable {
                     .put("opponent", this.username));
             return;
         }
+        if (this.inGame || challenger.inGame) {
+            challenger.send(new Message(Protocol.CHALLENGE_RESP)
+                    .put(Protocol.ACCEPT, false)
+                    .put("opponent", this.username + " đang trong trận"));
+            return;
+        }
 
+        this.inGame = challenger.inGame = true;
+        userDAO.setStatus(this.userId, Protocol.STATUS_INGAME);
+        userDAO.setStatus(challenger.userId, Protocol.STATUS_INGAME);
         GameRoom room = new GameRoom(challenger, this);
         new Thread(room::start, "GameRoom-" + System.currentTimeMillis()).start();
+        broadcastOnline();
     }
 
     /** Xử lý nộp đáp án */
@@ -211,25 +229,31 @@ public class ClientHandler implements Runnable {
         var his = matchDAO.getHistoryByUser(userId);
         send(new Message(Protocol.HISTORY_DATA).put(Protocol.HISTORY, his));
     }
+
+    /** Xử lý thoát trận */
     private void onQuitMatch() {
         if (inGame && currentRoom != null) {
             currentRoom.playerQuit(userId);
+            userDAO.setStatus(userId, Protocol.STATUS_ONLINE);
             inGame = false;
             currentRoom = null;
         }
-
         broadcastOnline();
     }
-    /** Dọn dẹp khi client thoát hoặc mất kết nối */
+    /** Dọn dẹp khi client mất kết nối */
     private void cleanup() {
         try {
             if (userId != null) {
-
                 userDAO.setStatus(userId, Protocol.STATUS_OFFLINE);
                 hub.remove(userId);
-
-                // broadcast lại danh sách sau khi xóa người chơi
-                broadcastOnline();
+                new Thread(() -> {
+                    try {
+                        Thread.sleep(100);
+                        broadcastOnline();
+                    } catch (Exception e) {
+                        System.err.println("[Cleanup] broadcast failed: " + e.getMessage());
+                    }
+                }).start();
             }
         } catch (Exception e) {
             System.err.println("Cleanup error for " + username + ": " + e.getMessage());

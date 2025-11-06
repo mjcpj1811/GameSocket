@@ -26,7 +26,7 @@ public class LeaderboardController {
         TableColumn<Map<String, Object>, Object> c3 = new TableColumn<>("Điểm cao nhất");
         c3.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().get("bestScore")));
 
-        TableColumn<Map<String, Object>, Object> c4 = new TableColumn<>("Thời gian tốt nhất");
+        TableColumn<Map<String, Object>, Object> c4 = new TableColumn<>("Thời gian");
         c4.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().get("bestTime")));
 
         tbl.getColumns().setAll(c1, c2, c3, c4);

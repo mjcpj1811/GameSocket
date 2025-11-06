@@ -27,7 +27,7 @@ public class UserDAO {
         return Optional.empty();
     }
 
-    // Cập nhật trạng thái (online/offline)
+    // Cập nhật trạng thái (online/offline/ingame)
     public void setStatus(String userId, String status) {
         String sql = "UPDATE Users SET status = ? WHERE id = ?";
         try (java.sql.Connection conn = Connection.getConnection();
