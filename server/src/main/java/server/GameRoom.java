@@ -79,10 +79,13 @@ public class GameRoom {
             RoundState rs = rounds.get(round);
             computeScore(rs);
 
+            double rt1 = round4(rs.t1);
+            double rt2 = round4(rs.t2);
+
             roundDAO.saveRound(matchId, round, rs.sequence,
                     p1.userId(), p2.userId(),
                     rs.ans1, rs.ans2,
-                    rs.s1, rs.s2, rs.t1, rs.t2);
+                    rs.s1, rs.s2, rt1, rt2);
 
             sendRoundResult(p1, p2, round, rs);
             sendRoundResult(p2, p1, round, rs);
@@ -108,8 +111,8 @@ public class GameRoom {
                 .put("oppAnswer", player == p1 ? rs.ans2 : rs.ans1)
                 .put(Protocol.YOUR_SCORE, player == p1 ? rs.s1 : rs.s2)
                 .put(Protocol.OPP_SCORE, player == p1 ? rs.s2 : rs.s1)
-                .put(Protocol.YOUR_TIME, player == p1 ? rs.t1 : rs.t2)
-                .put(Protocol.OPP_TIME, player == p1 ? rs.t2 : rs.t1));
+                .put(Protocol.YOUR_TIME, String.format("%.4f", player == p1 ? rs.t1 : rs.t2))
+                .put(Protocol.OPP_TIME, String.format("%.4f", player == p1 ? rs.t2 : rs.t1)));
     }
 
     private void computeScore(RoundState rs) {
@@ -117,8 +120,9 @@ public class GameRoom {
         rs.s2 = scoreFor(rs.sequence, rs.ans2);
         totalScore1 += rs.s1;
         totalScore2 += rs.s2;
-        totalTime1 += rs.t1;
-        totalTime2 += rs.t2;
+
+        totalTime1 = round4(totalTime1 + rs.t1);
+        totalTime2 = round4(totalTime2 + rs.t2);
     }
 
     private int scoreFor(String seq, String ans) {
@@ -158,20 +162,20 @@ public class GameRoom {
             String winnerId = winner.userId();
 
             matchDAO.setWinner(matchId, winnerId);
-            matchDAO.saveMatchDetail(winnerId, matchId, winnerScore, winnerTime);
-            matchDAO.saveMatchDetail(quitter.userId(), matchId, quitterScore, quitterTime);
+            matchDAO.saveMatchDetail(winnerId, matchId, winnerScore, round4(winnerTime));
+            matchDAO.saveMatchDetail(quitter.userId(), matchId, quitterScore, round4(quitterTime));
 
             winner.send(new Message(Protocol.MATCH_RESULT)
                     .put(Protocol.MATCH_ID, matchId)
                     .put(Protocol.TOTAL_SCORE, winnerScore)
-                    .put(Protocol.TOTAL_TIME, winnerTime)
+                    .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(winnerTime)))
                     .put("winner", winnerId)
                     .put("info", "Đối thủ đã thoát, bạn thắng!"));
 
             quitter.send(new Message(Protocol.MATCH_RESULT)
                     .put(Protocol.MATCH_ID, matchId)
                     .put(Protocol.TOTAL_SCORE, quitterScore)
-                    .put(Protocol.TOTAL_TIME, quitterTime)
+                    .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(quitterTime)))
                     .put("winner", winnerId)
                     .put("info", "Bạn đã bị xử thua vì thoát giữa trận."));
 
@@ -197,8 +201,8 @@ public class GameRoom {
         if (winner != null)
             matchDAO.setWinner(matchId, winner);
 
-        matchDAO.saveMatchDetail(p1.userId(), matchId, totalScore1, totalTime1);
-        matchDAO.saveMatchDetail(p2.userId(), matchId, totalScore2, totalTime2);
+        matchDAO.saveMatchDetail(p1.userId(), matchId, totalScore1, round4(totalTime1));
+        matchDAO.saveMatchDetail(p2.userId(), matchId, totalScore2, round4(totalTime2));
 
         sendMatchResult(p1, totalScore1, totalTime1, winner);
         sendMatchResult(p2, totalScore2, totalTime2, winner);
@@ -216,14 +220,21 @@ public class GameRoom {
         player.send(new Message(Protocol.MATCH_RESULT)
                 .put(Protocol.MATCH_ID, matchId)
                 .put(Protocol.TOTAL_SCORE, score)
-                .put(Protocol.TOTAL_TIME, time)
+                .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(time)))
                 .put("winner", winner));
+    }
+
+    private double round4(double value) {
+        return Math.round(value * 10000.0) / 10000.0;
     }
 
     public void submit(String userId, int round, String answer, double elapsed) {
         RoundState st = rounds.get(round);
         if (st == null) return;
-        if (userId.equals(p1.userId())) { st.ans1 = answer; st.t1 = elapsed; st.done1 = true; }
-        if (userId.equals(p2.userId())) { st.ans2 = answer; st.t2 = elapsed; st.done2 = true; }
+
+        double t = round4(elapsed);
+
+        if (userId.equals(p1.userId())) { st.ans1 = answer; st.t1 = t; st.done1 = true; }
+        if (userId.equals(p2.userId())) { st.ans2 = answer; st.t2 = t; st.done2 = true; }
     }
 }
