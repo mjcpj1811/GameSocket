@@ -73,24 +73,18 @@ public class ClientHandler implements Runnable {
                 Message msg = Message.fromJson(line);
                 String type = msg.getType();
 
-                if (Protocol.LOGIN.equals(type)) {
-                    onLogin(msg);
-                } else if (Protocol.LOGOUT.equals(type)) {
-                    onLogout();
-                } else if (Protocol.LIST_ONLINE.equals(type)) {
-                    onListOnline();
-                } else if (Protocol.CHALLENGE.equals(type)) {
-                    onChallenge(msg);
-                } else if (Protocol.CHALLENGE_RESP.equals(type)) {
-                    onChallengeResp(msg);
-                } else if (Protocol.SUBMIT_ANSWER.equals(type)) {
-                    onSubmitAnswer(msg);
-                } else if (Protocol.GET_LEADERBOARD.equals(type)) {
-                    onLeaderboard();
-                } else if (Protocol.GET_HISTORY.equals(type)) {
-                    onHistory();
-                } else if (Protocol.QUIT_MATCH.equals(type)) {
-                    onQuitMatch();
+                switch (type) {
+
+                    case Protocol.REGISTER -> onRegister(msg);
+                    case Protocol.LOGIN -> onLogin(msg);
+                    case Protocol.LOGOUT -> onLogout();
+                    case Protocol.LIST_ONLINE -> onListOnline();
+                    case Protocol.CHALLENGE -> onChallenge(msg);
+                    case Protocol.CHALLENGE_RESP -> onChallengeResp(msg);
+                    case Protocol.SUBMIT_ANSWER -> onSubmitAnswer(msg);
+                    case Protocol.GET_LEADERBOARD -> onLeaderboard();
+                    case Protocol.GET_HISTORY -> onHistory();
+                    case Protocol.QUIT_MATCH -> onQuitMatch();
                 }
             }
 
@@ -100,6 +94,28 @@ public class ClientHandler implements Runnable {
             e.printStackTrace();
         } finally {
             cleanup();
+        }
+    }
+    /** Xử lý đăng ký tài khoản mới */
+    private void onRegister(Message m) {
+        String uname = (String) m.getPayload().get(Protocol.USERNAME);
+        String pass  = (String) m.getPayload().get(Protocol.PASSWORD);
+
+        try {
+            if (userDAO.exists(uname)) {
+                send(new Message(Protocol.REGISTER_FAIL)
+                        .put("reason", "Tên tài khoản đã tồn tại!"));
+                System.out.println("[REGISTER] Tên đã tồn tại: " + uname);
+            } else {
+                userDAO.insert(uname, pass);
+                send(new Message(Protocol.REGISTER_OK)
+                        .put("info", "Đăng ký thành công"));
+                System.out.println("[REGISTER] Đăng ký mới: " + uname);
+            }
+        } catch (Exception e) {
+            send(new Message(Protocol.REGISTER_FAIL)
+                    .put("reason", "Lỗi máy chủ: " + e.getMessage()));
+            e.printStackTrace();
         }
     }
 

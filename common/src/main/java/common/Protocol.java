@@ -8,6 +8,10 @@ public interface Protocol {
     String LOGIN_OK         = "LOGIN_OK";
     String LOGIN_FAIL       = "LOGIN_FAIL";
     String LOGOUT           = "LOGOUT";
+    String REGISTER         = "REGISTER";
+    String REGISTER_OK      = "REGISTER_OK";
+    String REGISTER_FAIL    = "REGISTER_FAIL";
+
 
     String LIST_ONLINE      = "LIST_ONLINE";
     String ONLINE_UPDATE    = "ONLINE_UPDATE";

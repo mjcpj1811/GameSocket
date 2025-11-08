@@ -21,6 +21,7 @@ public class LoginController {
     @FXML private Button btnLogin;
     @FXML private Label lblStatus;
     @FXML private ImageView bg;
+    @FXML private Hyperlink linkRegister; // 🆕 thêm hyperlink đăng ký
 
     private Connection conn;
 
@@ -78,6 +79,20 @@ public class LoginController {
             st.setTitle("MemoryGame - Lobby");
             st.setScene(sc);
             st.show();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /** 🆕 Chuyển sang giao diện đăng ký */
+    @FXML private void goRegister() {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/register.fxml"));
+            Scene scene = new Scene(loader.load());
+            scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
+            Stage st = (Stage) txtUser.getScene().getWindow();
+            st.setScene(scene);
+            st.setTitle("MemoryGame - Đăng ký");
         } catch (Exception e) {
             e.printStackTrace();
         }
