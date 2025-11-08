@@ -45,8 +45,8 @@ public class LobbyController {
         conn.send(new Message(Protocol.LIST_ONLINE));
     }
 
-    @FXML private void onLeaderboard() { open("/fxml/leaderboard.fxml", "Leaderboard"); }
-    @FXML private void onHistory() { open("/fxml/history.fxml", "Lịch sử đấu"); }
+    @FXML private void onLeaderboard() { open("/fxml/leaderboard.fxml", "MemoryGame - Bảng xếp hạng"); }
+    @FXML private void onHistory() { open("/fxml/history.fxml", "MemoryGame - Lịch sử đấu"); }
     @FXML private void onLogout() {
         conn.send(new Message(Protocol.LOGOUT));
         ((Stage) lblUser.getScene().getWindow()).close();

@@ -4,10 +4,10 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.image.ImageView?>
-<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="client.ui.LoginController" prefWidth="1280.0" prefHeight="720.0">
 
-    <!-- Background image -->
+<AnchorPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ui.RegisterController" prefWidth="1280.0" prefHeight="720.0">
+
     <children>
         <ImageView fx:id="bg" fitHeight="720.0" fitWidth="1280.0" preserveRatio="false"
                    styleClass="bg-overlay"/>
@@ -15,15 +15,15 @@
         <VBox spacing="18.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0"
               AnchorPane.topAnchor="120.0" alignment="CENTER">
             <children>
-                <Label styleClass="title" text="Đăng nhập"/>
-
+                <Label styleClass="title" text="Đăng ký tài khoản"/>
                 <VBox styleClass="card" spacing="14.0" maxWidth="420.0">
                     <children>
                         <TextField fx:id="txtUser" promptText="Username"/>
                         <PasswordField fx:id="txtPass" promptText="Password"/>
-                        <Button fx:id="btnLogin" text="Đăng nhập" styleClass="primary"
-                                onAction="#onLogin" maxWidth="Infinity"/>
-                        <Hyperlink fx:id="linkRegister" text="Chưa có tài khoản? Đăng ký ngay" onAction="#goRegister"/>
+                        <PasswordField fx:id="txtConfirm" promptText="Nhập lại Password"/>
+                        <Button fx:id="btnRegister" text="Đăng ký" styleClass="primary"
+                                onAction="#onRegister" maxWidth="Infinity"/>
+                        <Hyperlink text="← Quay lại đăng nhập" onAction="#goLogin"/>
                     </children>
                 </VBox>
             </children>
