@@ -16,7 +16,7 @@ public class ClientMain extends Application {
         // Nếu có CSS thì load thêm
         scene.getStylesheets().add(getClass().getResource("/css/styles.css").toExternalForm());
 
-        stage.setTitle("MemoryGame - Login");
+         stage.setTitle("MemoryGame - Login");
         stage.setScene(scene);
         stage.show();
     }

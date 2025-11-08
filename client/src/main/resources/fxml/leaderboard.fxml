@@ -1,16 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ui.LeaderboardController" prefWidth="960.0" prefHeight="640.0">
 
-<VBox xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="client.ui.LeaderboardController" spacing="10"
-      stylesheets="@/css/styles.css">
+    <top>
+        <HBox spacing="10" styleClass="appbar" alignment="CENTER_LEFT">
+            <children>
+                <Label text="Bảng xếp hạng" styleClass="title"/>
+                <Label text="Top players" styleClass="muted"/>
+            </children>
+        </HBox>
+    </top>
 
-    <padding>
-        <Insets top="16" right="16" bottom="16" left="16"/>
-    </padding>
-
-    <Label text="Bảng xếp hạng" styleClass="title"/>
-    <TableView fx:id="tbl"/>
-</VBox>
+    <center>
+        <VBox spacing="12" styleClass="card" BorderPane.alignment="CENTER">
+            <children>
+                <TableView fx:id="tbl" prefHeight="520.0" prefWidth="920.0" VBox.vgrow="ALWAYS" />
+            </children>
+        </VBox>
+    </center>
+</BorderPane>

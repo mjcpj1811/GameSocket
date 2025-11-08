@@ -30,6 +30,7 @@ public class LeaderboardController {
         c4.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().get("bestTime")));
 
         tbl.getColumns().setAll(c1, c2, c3, c4);
+        tbl.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
 
         Connection conn = Session.get().connection;
 

@@ -1,33 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
+
 <?import javafx.scene.layout.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
+<?import javafx.scene.image.ImageView?>
 
-<BorderPane xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml"
-            fx:controller="client.ui.LobbyController"
-            stylesheets="@/css/styles.css">
-
-    <top>
-        <HBox spacing="12" alignment="CENTER_LEFT" styleClass="appbar">
-            <Label text="Lobby" styleClass="title"/>
-            <Label text="|" styleClass="muted"/>
-            <Label text="Bạn:"/>
-            <Label fx:id="lblUser" styleClass="accent"/>
-            <HBox HBox.hgrow="ALWAYS"/>
-            <Button text="Leaderboard" onAction="#onLeaderboard" styleClass="ghost"/>
-            <Button text="Lịch sử đấu" onAction="#onHistory" styleClass="ghost"/>
-            <Button text="Logout" onAction="#onLogout" styleClass="danger"/>
-        </HBox>
-    </top>
+<BorderPane xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="client.ui.LobbyController" prefWidth="1280.0" prefHeight="720.0">
 
     <center>
-        <VBox spacing="8">
-            <padding>
-                <Insets top="16" right="16" bottom="16" left="16"/>
-            </padding>
+        <AnchorPane>
+            <children>
+                <ImageView fx:id="bg" fitHeight="720.0" fitWidth="1280.0"
+                           preserveRatio="false" styleClass="bg-overlay"/>
+                <HBox spacing="30.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0"
+                      AnchorPane.topAnchor="60.0" AnchorPane.bottomAnchor="60.0">
+                    <children>
+                        <!-- Left side: info + buttons -->
+                        <VBox spacing="25.0" prefWidth="320.0" alignment="TOP_CENTER" AnchorPane.leftAnchor="60.0">
+                            <children>
+                                <!-- Thông tin người chơi -->
+                                <VBox spacing="10" styleClass="card" prefWidth="260.0">
+                                    <children>
+                                        <HBox spacing="10" alignment="CENTER_LEFT">
+                                            <Label text="Lobby" styleClass="title"/>
+                                            <Label fx:id="lblUser" text="username" styleClass="subtitle"/>
+                                        </HBox>
+                                    </children>
+                                </VBox>
 
-            <Label text="Người chơi online" styleClass="subtitle"/>
-            <ListView fx:id="lvOnline"/>
-        </VBox>
+                                <!-- Cụm nút chức năng -->
+                                <VBox spacing="16.0" alignment="CENTER">
+                                    <children>
+                                        <Button fx:id="btnLeaderboard" text="Bảng xếp hạng"
+                                                onAction="#onLeaderboard"
+                                                styleClass="primary" prefWidth="220" prefHeight="44"/>
+                                        <Button fx:id="btnHistory" text="Lịch sử đấu"
+                                                onAction="#onHistory"
+                                                styleClass="primary" prefWidth="220" prefHeight="44"/>
+                                        <Button fx:id="btnLogout" text="Đăng xuất"
+                                                onAction="#onLogout"
+                                                styleClass="danger" prefWidth="220" prefHeight="44"/>
+                                    </children>
+                                </VBox>
+                            </children>
+                        </VBox>
+
+                        <!-- Right side: online list -->
+                        <VBox spacing="10.0" VBox.vgrow="ALWAYS">
+                            <children>
+                                <Label text="Danh sách online" styleClass="title"/>
+                                <ListView fx:id="lvOnline" prefWidth="800.0" prefHeight="580.0" VBox.vgrow="ALWAYS"/>
+                            </children>
+                        </VBox>
+                    </children>
+                </HBox>
+            </children>
+        </AnchorPane>
     </center>
 </BorderPane>

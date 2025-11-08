@@ -1,0 +1,58 @@
+
+/* Nền chính của Alert */
+.dialog-pane {
+    -fx-background-color: rgba(255, 255, 255, 0.95);
+    -fx-background-radius: 18;
+    -fx-border-radius: 18;
+    -fx-border-color: rgba(14, 165, 233, 0.35);
+    -fx-padding: 20;
+    -fx-font-family: "Inter", "Pixelify Sans", sans-serif;
+}
+
+/* Header (tiêu đề của Alert) */
+.dialog-pane .header-panel {
+    -fx-background-color: linear-gradient(to right, #e0f2fe, #f0f9ff);
+    -fx-background-radius: 14;
+    -fx-padding: 8 12;
+}
+.dialog-pane .header-panel .label {
+    -fx-text-fill: #0ea5e9;
+    -fx-font-size: 16px;
+    -fx-font-weight: 800;
+}
+
+/* Nội dung thông báo */
+.dialog-pane .content.label {
+    -fx-text-fill: #334155;
+    -fx-font-size: 14px;
+    -fx-padding: 12 0 8 0;
+}
+
+/* Các nút trong Alert (OK, Cancel, Yes/No...) */
+.dialog-pane .button {
+    -fx-font-weight: 700;
+    -fx-font-size: 13px;
+    -fx-background-radius: 12;
+    -fx-padding: 8 16;
+}
+
+.dialog-pane .button:hover {
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.4), 10, 0.3, 0, 0);
+}
+
+/* Nút chính (OK, Yes) */
+.dialog-pane .button:default {
+    -fx-background-color: linear-gradient(to bottom, #38bdf8, #0ea5e9);
+    -fx-text-fill: white;
+}
+
+/* Nút phụ (Cancel, No) */
+.dialog-pane .button:cancel {
+    -fx-background-color: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+    -fx-text-fill: #0f172a;
+}
+
+/* Đổ bóng tổng thể */
+.dialog-pane {
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.3), 24, 0.45, 0, 6);
+}
