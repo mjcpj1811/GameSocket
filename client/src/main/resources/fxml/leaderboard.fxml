@@ -9,7 +9,6 @@
         <HBox spacing="10" styleClass="appbar" alignment="CENTER_LEFT">
             <children>
                 <Label text="Bảng xếp hạng" styleClass="title"/>
-                <Label text="Top players" styleClass="muted"/>
             </children>
         </HBox>
     </top>

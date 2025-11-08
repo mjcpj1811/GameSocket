@@ -1,58 +1,63 @@
+/* ==== ALERT / CONFIRM / INFO - PHONG CÁCH ARCADE SÁNG ==== */
 
-/* Nền chính của Alert */
 .dialog-pane {
-    -fx-background-color: rgba(255, 255, 255, 0.95);
-    -fx-background-radius: 18;
-    -fx-border-radius: 18;
-    -fx-border-color: rgba(14, 165, 233, 0.35);
-    -fx-padding: 20;
+    -fx-background-color: #ffffff;
+    -fx-border-color: rgba(14,165,233,0.4); /* xanh sáng arcade */
+    -fx-border-width: 2;
+    -fx-background-radius: 0; /* góc vuông */
+    -fx-border-radius: 0;
+    -fx-padding: 18 22;
     -fx-font-family: "Inter", "Pixelify Sans", sans-serif;
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.2), 20, 0.3, 0, 4);
 }
 
-/* Header (tiêu đề của Alert) */
-.dialog-pane .header-panel {
-    -fx-background-color: linear-gradient(to right, #e0f2fe, #f0f9ff);
-    -fx-background-radius: 14;
-    -fx-padding: 8 12;
+/* Header (tiêu đề “Kết thúc trận”) */
+.dialog-pane > .header-panel {
+    -fx-background-color: #f0f9ff;
+    -fx-padding: 10 16;
+    -fx-border-color: rgba(14,165,233,0.2);
+    -fx-border-width: 0 0 1 0; /* chỉ viền dưới */
 }
-.dialog-pane .header-panel .label {
-    -fx-text-fill: #0ea5e9;
+.dialog-pane > .header-panel .label {
+    -fx-text-fill: #0284c7;
     -fx-font-size: 16px;
     -fx-font-weight: 800;
 }
 
-/* Nội dung thông báo */
+/* Nội dung chính */
 .dialog-pane .content.label {
     -fx-text-fill: #334155;
     -fx-font-size: 14px;
-    -fx-padding: 12 0 8 0;
+    -fx-padding: 12 4 10 4;
 }
 
-/* Các nút trong Alert (OK, Cancel, Yes/No...) */
+/* Thanh chứa nút */
+.dialog-pane > .button-bar {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent;
+    -fx-padding: 14 0 0 0;
+}
+
+/* Nút chung */
 .dialog-pane .button {
     -fx-font-weight: 700;
     -fx-font-size: 13px;
-    -fx-background-radius: 12;
+    -fx-background-radius: 6;
     -fx-padding: 8 16;
+    -fx-cursor: hand;
 }
-
 .dialog-pane .button:hover {
     -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.4), 10, 0.3, 0, 0);
 }
 
-/* Nút chính (OK, Yes) */
+/* Nút chính (OK / Yes) */
 .dialog-pane .button:default {
     -fx-background-color: linear-gradient(to bottom, #38bdf8, #0ea5e9);
     -fx-text-fill: white;
 }
 
-/* Nút phụ (Cancel, No) */
+/* Nút phụ (Cancel / No) */
 .dialog-pane .button:cancel {
-    -fx-background-color: linear-gradient(to bottom, #f1f5f9, #e2e8f0);
+    -fx-background-color: #f1f5f9;
     -fx-text-fill: #0f172a;
-}
-
-/* Đổ bóng tổng thể */
-.dialog-pane {
-    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.3), 24, 0.45, 0, 6);
 }

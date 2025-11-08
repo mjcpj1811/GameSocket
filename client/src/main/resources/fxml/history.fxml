@@ -9,7 +9,6 @@
         <HBox spacing="10" styleClass="appbar" alignment="CENTER_LEFT">
             <children>
                 <Label text="Lịch sử đấu" styleClass="title"/>
-                <Label text="Kết quả những trận đã chơi" styleClass="muted"/>
             </children>
         </HBox>
     </top>
