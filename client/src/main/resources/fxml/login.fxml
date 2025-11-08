@@ -23,6 +23,7 @@
                         <PasswordField fx:id="txtPass" promptText="Password"/>
                         <Button fx:id="btnLogin" text="Đăng nhập" styleClass="primary"
                                 onAction="#onLogin" maxWidth="Infinity"/>
+                        <Label fx:id="lblStatus" text="" styleClass="muted"/>
                         <Hyperlink fx:id="linkRegister" text="Chưa có tài khoản? Đăng ký ngay" onAction="#goRegister"/>
                     </children>
                 </VBox>

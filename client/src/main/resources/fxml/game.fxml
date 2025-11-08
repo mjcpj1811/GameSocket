@@ -8,10 +8,11 @@
             fx:controller="client.ui.GameController" prefWidth="1280.0" prefHeight="720.0">
 
     <children>
+        <!-- Background -->
         <ImageView fx:id="bg" fitHeight="720.0" fitWidth="1280.0" preserveRatio="false"
                    styleClass="bg-overlay"/>
 
-        <VBox spacing="16.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0"
+        <VBox spacing="18.0" AnchorPane.leftAnchor="40.0" AnchorPane.rightAnchor="40.0"
               AnchorPane.topAnchor="30.0" AnchorPane.bottomAnchor="30.0">
 
             <!-- Header -->
@@ -29,33 +30,38 @@
 
             <!-- Timer -->
             <HBox spacing="10" alignment="CENTER_LEFT">
-                <Label text="Thời gian:" styleClass="muted"/>
-                <Label fx:id="lblTimer" text="10s" styleClass="subtitle"/>
+                <Label text="Thời gian:" style="-fx-font-weight: bold;"/>
+                <Label fx:id="lblTimer" text="Hiển thị: 3s" styleClass="subtitle"/>
             </HBox>
 
-            <!-- Sequence Display -->
-            <Label fx:id="lblSeq" text="CHUỖI HIỂN THỊ" styleClass="sequence" alignment="CENTER"
-                   maxWidth="Infinity"/>
+            <!-- Chuỗi hiển thị -->
+            <Label fx:id="lblSeq" text="●●●●●" styleClass="sequence" alignment="CENTER" maxWidth="Infinity"/>
 
-            <!-- Input area -->
-            <HBox spacing="10" alignment="CENTER_LEFT">
-                <TextField fx:id="txtAnswer" promptText="Nhập chuỗi ở đây" prefWidth="600"/>
-                <Button fx:id="btnSubmit" text="Gửi" onAction="#onSubmit" styleClass="primary"/>
-            </HBox>
+            <!-- Khu vực nhập -->
+            <VBox spacing="12" alignment="CENTER">
+                <!-- Dòng thông tin (ở vị trí ô đỏ cũ) -->
+                <HBox spacing="10" alignment="CENTER_LEFT">
+                    <Label fx:id="lblInfo" text="Nhập lại chuỗi!" style="-fx-font-weight: bold; -fx-font-size: 16px; -fx-text-fill: #0f172a;"/>
+                    <Region HBox.hgrow="ALWAYS"/>
+                    <Button fx:id="btnSubmit" text="Gửi" onAction="#onSubmit" styleClass="primary" prefWidth="150" prefHeight="42"/>
+                </HBox>
 
-            <!-- Info label -->
-            <Label fx:id="lblInfo" text="Thông báo vòng chơi..." styleClass="muted"/>
+                <!-- Ô nhập xuống dưới (ở vị trí ô vàng cũ) -->
+                <TextField fx:id="txtAnswer" promptText="Nhập chuỗi ở đây"
+                           prefHeight="42" prefWidth="600"
+                           style="-fx-font-size: 16px; -fx-background-radius: 10;"/>
+            </VBox>
 
-            <!-- Round history table -->
+            <!-- Lịch sử round -->
             <VBox spacing="10" VBox.vgrow="ALWAYS">
                 <Label text="Bảng lịch sử round" styleClass="title"/>
-                <TableView fx:id="tblRound" prefHeight="400" VBox.vgrow="ALWAYS" >
+                <TableView fx:id="tblRound" prefHeight="400" VBox.vgrow="ALWAYS">
                     <columns>
                         <TableColumn fx:id="colRound" text="Round" prefWidth="80"/>
                         <TableColumn fx:id="colSeq" text="Chuỗi" prefWidth="250"/>
                         <TableColumn fx:id="colYourAns" text="Chuỗi của bạn" prefWidth="250"/>
                         <TableColumn fx:id="colOppAns" text="Chuỗi của đối thủ" prefWidth="250"/>
-                        <TableColumn fx:id="colScore" text="Tỉ số (Bạn-Đối thủ)" prefWidth="100"/>
+                        <TableColumn fx:id="colScore" text="Điểm (Bạn - Đối thủ)" prefWidth="120"/>
                     </columns>
                 </TableView>
             </VBox>
