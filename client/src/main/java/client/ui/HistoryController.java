@@ -32,7 +32,7 @@ public class HistoryController {
         c5.setCellValueFactory(cell -> new ReadOnlyObjectWrapper<>(cell.getValue().get("winner")));
 
         tbl.getColumns().setAll(c1, c2, c3, c4, c5);
-
+        tbl.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         Connection conn = Session.get().connection;
 
         // nhận 1 lần, không đụng mainListener

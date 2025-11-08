@@ -1,22 +1,266 @@
-.root { -fx-font-family: "Inter", "Segoe UI", sans-serif; }
+/* ===== MemoryGame - Arcade Light Neon Theme (1280x720) ===== */
+.root {
+    -fx-font-family: "Pixelify Sans", "Press Start 2P", "Inter", "Segoe UI", sans-serif;
+    -fx-text-fill: #0f172a; /* slate-900 */
+    -fx-background-color:
+            linear-gradient(to bottom, #eef2f7, #f8fafc);
+}
 
-.card { -fx-padding: 24; -fx-background-radius: 16; -fx-background-color: white;
-    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.08), 16, 0, 0, 4); }
+/* Shared background image holder */
+.bg-overlay {
+    -fx-opacity: 0.25;
+}
 
-.appbar { -fx-padding: 12; -fx-background-color: linear-gradient(to right, #f8fafc, #ffffff); }
+.appbar {
+    -fx-background-color: linear-gradient(to right, #f1f5f9, #ffffff);
+    -fx-padding: 14;
+    -fx-border-color: #e5e7eb;
+    -fx-border-width: 0 0 1 0;
+}
 
-.title { -fx-font-size: 22px; -fx-font-weight: 700; }
-.subtitle { -fx-font-size: 16px; -fx-font-weight: 600; }
-.muted { -fx-text-fill: #666; }
-.accent { -fx-text-fill: #0ea5e9; -fx-font-weight: 600; }
+.title { -fx-font-size: 22px; -fx-font-weight: 800; -fx-text-fill: #0ea5e9; }
+.subtitle {
+    -fx-font-size: 20px;
+    -fx-font-weight: 800;
+    -fx-text-fill: #000000;    }
+.muted { -fx-text-fill: #64748b; }
 
-.button.primary { -fx-background-color: #0ea5e9; -fx-text-fill: white; -fx-background-radius: 10; }
-.button.primary:hover { -fx-background-color: #0284c7; }
+.card {
+    -fx-background-color: rgba(255,255,255,0.85);
+    -fx-background-radius: 18;
+    -fx-padding: 22;
+    -fx-effect: dropshadow(gaussian, rgba(2,132,199,0.18), 18, 0.35, 0, 6);
+    -fx-border-color: rgba(14,165,233,0.25);
+    -fx-border-radius: 18;
+}
 
-.button.danger { -fx-background-color: #ef4444; -fx-text-fill: white; -fx-background-radius: 10; }
-.button.danger:hover { -fx-background-color: #b91c1c; }
+/* Buttons */
+/* === NÚT CHUNG === */
+.button {
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-cursor: hand;
+    -fx-background-radius: 14;
+    -fx-padding: 12 22;
+    -fx-pref-width: 220;
+    -fx-pref-height: 44;
+    -fx-alignment: center;
+}
 
-.button.ghost { -fx-background-color: transparent; -fx-border-color: #ddd; -fx-border-radius: 10; }
+/* === NÚT CHÍNH (xanh neon sáng) === */
+.button.primary {
+    -fx-background-color: linear-gradient(to bottom, #38bdf8, #0ea5e9);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.25), 10, 0.3, 0, 2);
+}
+.button.primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.6), 16, 0.3, 0, 0);
+}
 
-.sequence { -fx-font-size: 28px; -fx-font-weight: 700; -fx-padding: 16; -fx-background-color: #0ea5e90f;
-    -fx-background-radius: 12; }
+/* === NÚT NGUY HIỂM (đỏ) === */
+.button.danger {
+    -fx-background-color: linear-gradient(to bottom, #fb7185, #ef4444);
+    -fx-text-fill: white;
+    -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.25), 10, 0.3, 0, 2);
+}
+.button.danger:hover {
+    -fx-effect: dropshadow(gaussian, rgba(239,68,68,0.6), 14, 0.35, 0, 0);
+}
+
+/* === NÚT PHỤ (trong suốt, viền xám) === */
+.button.ghost {
+    -fx-background-color: transparent;
+    -fx-border-color: #cbd5e1;
+    -fx-border-width: 2;
+    -fx-text-fill: #0f172a;
+}
+.button.ghost:hover {
+    -fx-border-color: #0ea5e9;
+    -fx-text-fill: #0ea5e9;
+}
+/* === NÚT "THÁCH ĐẤU" TRONG DANH SÁCH ONLINE === */
+.list-cell .button.primary {
+    -fx-font-size: 12px;
+    -fx-padding: 6 14;
+    -fx-pref-width: 120;
+    -fx-pref-height: 30;
+    -fx-background-radius: 10;
+    -fx-effect: none;
+}
+.list-cell .button.primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.3), 8, 0.2, 0, 0);
+}
+
+/* Inputs */
+.text-field, .password-field {
+    -fx-background-radius: 10;
+    -fx-background-color: #ffffff;
+    -fx-border-color: #cbd5e1;
+    -fx-border-radius: 10;
+    -fx-padding: 8 12;
+}
+.text-field:focused, .password-field:focused {
+    -fx-border-color: #0ea5e9;
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.3), 14, 0.25, 0, 0);
+}
+
+/* Tables */
+.table-view {
+    -fx-background-color: rgba(255,255,255,0.65);
+    -fx-background-radius: 12;
+    -fx-border-color: #e2e8f0;
+    -fx-border-radius: 12;
+}
+.table-view .column-header-background { -fx-background-color: #f1f5f9; }
+.table-view .column-header .label { -fx-text-fill: #0f172a; -fx-font-weight: 700; }
+.table-row-cell:odd { -fx-background-color: rgba(14,165,233,0.04); }
+.table-row-cell:even { -fx-background-color: transparent; }
+.table-row-cell:selected { -fx-background-color: #bae6fd; }
+
+/* Game sequence & timer */
+.sequence {
+    -fx-font-size: 30px; -fx-font-weight: 900;
+    -fx-text-fill: #ef4444;
+    -fx-background-color: rgba(14,165,233,0.08);
+    -fx-background-radius: 14;
+    -fx-padding: 16 22;
+}
+.timer {
+    -fx-font-size: 18px; -fx-font-weight: 800; -fx-text-fill: #334155;
+}
+
+/*!* Flicker animation (subtle) *!*/
+/*@keyframes flicker {*/
+/*    0%, 19%, 21%, 23%, 80%, 100% { -fx-opacity: 1; }*/
+/*    20%, 22% { -fx-opacity: 0.6; }*/
+/*}*/
+/*.flicker { -fx-animation: flicker 3s infinite; }*/
+
+/* Lobby list items */
+.online-row {
+    -fx-padding: 8 12; -fx-background-radius: 12;
+}
+.online-name { -fx-font-size: 14px; -fx-font-weight: 800; -fx-text-fill: #0f172a; }
+.online-status { -fx-font-size: 12px; -fx-font-weight: 700; }
+.status-online { -fx-text-fill: #16a34a; }
+.status-ingame { -fx-text-fill: #f59e0b; }
+.status-unknown { -fx-text-fill: #64748b; }
+
+/* Layout helpers */
+.centered { -fx-alignment: center; }
+.spread { -fx-alignment: center-left; -fx-spacing: 10; }
+
+/* === BẢNG DỮ LIỆU (TableView) - Theme Arcade Sáng === */
+.table-view {
+    -fx-background-color: rgba(255,255,255,0.85);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(14,165,233,0.25);
+    -fx-border-radius: 12;
+    -fx-padding: 6;
+    -fx-table-cell-border-color: transparent;
+    -fx-font-size: 14px;
+    -fx-font-family: "Inter", "Pixelify Sans", sans-serif;
+}
+
+/* Header (tên cột) */
+.table-view .column-header-background {
+    -fx-background-color: linear-gradient(to bottom, #e0f2fe, #f0f9ff);
+    -fx-background-radius: 12 12 0 0;
+    -fx-border-radius: 12 12 0 0;
+}
+.table-view .column-header,
+.table-view .filler {
+    -fx-border-color: transparent transparent #bae6fd transparent;
+}
+.table-view .column-header .label {
+    -fx-text-fill: #0ea5e9;
+    -fx-font-weight: 700;
+}
+
+/* Hàng xen kẽ */
+.table-row-cell:odd {
+    -fx-background-color: rgba(240,250,255,0.8);
+}
+.table-row-cell:even {
+    -fx-background-color: rgba(255,255,255,0.8);
+}
+
+/* Hover & Select */
+.table-row-cell:hover {
+    -fx-background-color: #e0f2fe;
+}
+.table-row-cell:selected {
+    -fx-background-color: #bae6fd;
+    -fx-text-fill: #0f172a;
+}
+
+/* Bo góc vùng cuộn */
+.table-view .virtual-flow {
+    -fx-background-radius: 12;
+}
+/* === DANH SÁCH ONLINE (LOBBY) === */
+
+/* Nền chung của ListView */
+.list-view {
+    -fx-background-color: rgba(255, 255, 255, 0.85);
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-border-color: rgba(14, 165, 233, 0.25);
+    -fx-padding: 6;
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.08), 10, 0.3, 0, 3);
+}
+
+/* Mỗi hàng trong danh sách */
+.list-cell {
+    -fx-background-color: transparent;
+    -fx-padding: 8 12;
+    -fx-alignment: CENTER_LEFT;
+}
+
+/* Khi hover */
+.list-cell:hover {
+    -fx-background-color: rgba(14,165,233,0.08);
+    -fx-background-radius: 10;
+}
+
+/* Khi chọn */
+.list-cell:selected {
+    -fx-background-color: rgba(14,165,233,0.20);
+    -fx-background-radius: 10;
+}
+
+/* Tên người chơi */
+.online-name {
+    -fx-font-weight: 700;
+    -fx-font-size: 14px;
+    -fx-text-fill: #0f172a;
+}
+
+/* Trạng thái ONLINE / INGAME */
+.status-online {
+    -fx-text-fill: #16a34a;
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+}
+.status-ingame {
+    -fx-text-fill: #f59e0b;
+    -fx-font-weight: 600;
+    -fx-font-size: 12px;
+}
+.status-offline {
+    -fx-text-fill: #94a3b8;
+    -fx-font-size: 12px;
+}
+
+/* Nút thách đấu nhỏ */
+.list-cell .button.primary {
+    -fx-font-size: 12px;
+    -fx-padding: 6 14;
+    -fx-pref-width: 100;
+    -fx-pref-height: 28;
+    -fx-background-radius: 10;
+    -fx-effect: none;
+}
+.list-cell .button.primary:hover {
+    -fx-effect: dropshadow(gaussian, rgba(14,165,233,0.3), 8, 0.2, 0, 0);
+}

@@ -11,8 +11,12 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+
 
 import java.util.*;
 
@@ -22,6 +26,7 @@ public class GameController {
     @FXML private Button btnSubmit, btnQuit;
     @FXML private TableView<Map<String,Object>> tblRound;
     @FXML private TableColumn<Map<String,Object>, Object> colRound, colSeq, colYourAns, colOppAns, colScore;
+    @FXML private ImageView bg;
 
     private static GameController INSTANCE;
     private Connection conn;
@@ -41,6 +46,7 @@ public class GameController {
         colYourAns.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().get("yourAns")));
         colOppAns.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().get("oppAns")));
         colScore.setCellValueFactory(c -> new ReadOnlyObjectWrapper<>(c.getValue().get("score")));
+        bg.setImage(new Image(getClass().getResource("/assets/bg_arcade.png").toExternalForm()));
 
         service = new GameService();
         new Thread(service, "GameService").start();
@@ -133,24 +139,19 @@ public class GameController {
             row.put("yourAns", yourAns);
             row.put("oppAns", oppAns);
             row.put("score", sYou + " - " + sOpp);
+            tblRound.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
             tblRound.getItems().add(row);
         });
     }
 
     private void onMatchResult(Message m) {
         String info = (String) m.getPayload().getOrDefault("info", "");
+        int total = ((Number) m.getPayload().getOrDefault(Protocol.TOTAL_SCORE, 0)).intValue();
 
-        int total = ((Number) m.getPayload()
-                .getOrDefault(Protocol.TOTAL_SCORE, 0))
-                .intValue();
-
-        // ⚙️ Sửa chỗ này: luôn parse từ String, tránh ClassCastException
         double tt = 0.0;
         Object timeObj = m.getPayload().get(Protocol.TOTAL_TIME);
         if (timeObj != null) {
-            try {
-                tt = Double.parseDouble(timeObj.toString());
-            } catch (NumberFormatException ignored) {}
+            try { tt = Double.parseDouble(timeObj.toString()); } catch (NumberFormatException ignored) {}
         }
 
         Object win = m.getPayload().get("winner");
@@ -166,6 +167,14 @@ public class GameController {
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
             a.setHeaderText("Kết thúc trận");
+            Stage owner = (Stage) lblYou.getScene().getWindow();
+            a.initOwner(owner);
+            a.initModality(Modality.WINDOW_MODAL);
+            a.setOnShown(ev -> {
+                Stage stage = (Stage) a.getDialogPane().getScene().getWindow();
+                stage.toFront();
+            });
+            styleAlert(a);
             a.showAndWait();
             service.stop();
             returnToLobby();
@@ -177,12 +186,22 @@ public class GameController {
             if (service != null) service.stop();
             conn.send(new Message(Protocol.QUIT_MATCH));
 
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setHeaderText("Bạn đã thoát trận");
-            alert.setContentText("Hệ thống sẽ xử thua bạn trong trận này.");
-            alert.showAndWait();
+            Platform.runLater(() -> {
+                Alert alert = new Alert(Alert.AlertType.INFORMATION);
+                alert.setHeaderText("Bạn đã thoát trận");
+                alert.setContentText("Hệ thống sẽ xử thua bạn trong trận này.");
 
-            returnToLobby();
+                Stage owner = (Stage) lblYou.getScene().getWindow();
+                alert.initOwner(owner);
+                alert.initModality(Modality.WINDOW_MODAL);
+                alert.setOnShown(ev -> {
+                    Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+                    stage.toFront();
+                });
+                styleAlert(alert);
+                alert.showAndWait();
+                returnToLobby();
+            });
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -196,43 +215,29 @@ public class GameController {
 
             Platform.runLater(() -> {
                 try {
-                    Stage stage = null;
-                    if (lblYou != null && lblYou.getScene() != null) {
-                        stage = (Stage) lblYou.getScene().getWindow();
-                    } else {
-                        stage = (Stage) Stage.getWindows().stream()
-                                .filter(Window::isShowing)
-                                .findFirst()
-                                .orElse(null);
-                    }
+                    Stage stage = (Stage) lblYou.getScene().getWindow();
+                    stage.setTitle("MemoryGame - Lobby");
+                    stage.setScene(scene);
 
-                    if (stage != null) {
-                        stage.setTitle("MemoryGame - Lobby");
-                        stage.setScene(scene);
-                    } else {
-                        System.err.println("[WARN] No active stage found while returning to lobby");
-                    }
-
-                    // 🔹 Khôi phục listener lobby
-                    if (Session.get().lobbyListener != null) {
+                    if (Session.get().lobbyListener != null)
                         Session.get().connection.setMainListener(Session.get().lobbyListener);
-                    }
 
-                    // 🔹 Yêu cầu refresh danh sách online sau 300ms
                     new Thread(() -> {
-                        try {
-                            Thread.sleep(300);
+                        try { Thread.sleep(300);
                             Session.get().connection.send(new Message(Protocol.LIST_ONLINE));
                         } catch (Exception ignored) {}
                     }).start();
 
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                }
+                } catch (Exception ex) { ex.printStackTrace(); }
             });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+    private void styleAlert(Alert alert) {
+        alert.getDialogPane().getStylesheets().add(
+                getClass().getResource("/css/dialog.css").toExternalForm()
+        );
+        Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
+        stage.initStyle(javafx.stage.StageStyle.UNDECORATED);
     }
 
 }
