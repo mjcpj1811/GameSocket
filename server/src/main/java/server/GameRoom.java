@@ -203,13 +203,11 @@ public class GameRoom {
         sendMatchResult(p1, totalScore1, totalTime1, winner);
         sendMatchResult(p2, totalScore2, totalTime2, winner);
 
-        // ✅ Cập nhật trạng thái về ONLINE
         p1.setInGame(false, null);
         p2.setInGame(false, null);
         userDAO.setStatus(p1.userId(), Protocol.STATUS_ONLINE);
         userDAO.setStatus(p2.userId(), Protocol.STATUS_ONLINE);
 
-        // ✅ Cập nhật live danh sách online
         p1.broadcastOnline();
         p2.broadcastOnline();
     }

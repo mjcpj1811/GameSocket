@@ -208,7 +208,6 @@ public class GameController {
                         try {
                             Thread.sleep(300);
                             Session.get().connection.send(new Message(Protocol.LIST_ONLINE));
-                            System.out.println("[CLIENT] 🟢 Requested LIST_ONLINE after returning to lobby");
                         } catch (Exception ignored) {}
                     }).start();
 
