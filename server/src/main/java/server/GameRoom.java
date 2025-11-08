@@ -66,7 +66,7 @@ public class GameRoom {
             if (aborted) return;
 
             String seq = genSeq(round);
-            int timeShow = Math.min(round, 10);
+            int timeShow = Math.min(round+1, 10);
             int timeInput = 5 + (round - 1);
 
             RoundState st = new RoundState();
