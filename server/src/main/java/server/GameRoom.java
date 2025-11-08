@@ -9,6 +9,7 @@ import server.dao.UserDAO;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /** Quản lý 1 trận đấu 2 người trong 15 vòng */
 public class GameRoom {
@@ -22,6 +23,8 @@ public class GameRoom {
     private volatile boolean aborted = false;
 
     private final Map<Integer, RoundState> rounds = new ConcurrentHashMap<>();
+    private final Map<Integer, AtomicBoolean> processed = new ConcurrentHashMap<>();
+
     private int totalScore1 = 0, totalScore2 = 0;
     private double totalTime1 = 0, totalTime2 = 0;
 
@@ -69,12 +72,17 @@ public class GameRoom {
             RoundState st = new RoundState();
             st.sequence = seq;
             rounds.put(round, st);
+            processed.put(round, new AtomicBoolean(false));
 
             sendRoundStart(p1, round, seq, timeShow, timeInput);
             sendRoundStart(p2, round, seq, timeShow, timeInput);
 
+            // ⏳ Chờ người chơi nhập, vẫn tiếp tục nếu AFK
             waitForRound(round, timeShow + timeInput + 3);
             if (aborted) return;
+
+            // ✅ Đảm bảo chỉ xử lý 1 lần / vòng
+            if (!processed.get(round).compareAndSet(false, true)) continue;
 
             RoundState rs = rounds.get(round);
             computeScore(rs);
@@ -146,6 +154,62 @@ public class GameRoom {
         }
     }
 
+    public synchronized void submit(String userId, int round, String answer, double elapsed) {
+        RoundState st = rounds.get(round);
+        if (st == null || aborted) return;
+
+        double t = round4(elapsed);
+        if (userId.equals(p1.userId())) { st.ans1 = answer; st.t1 = t; st.done1 = true; }
+        else if (userId.equals(p2.userId())) { st.ans2 = answer; st.t2 = t; st.done2 = true; }
+
+        // Nếu cả 2 đã nộp và chưa xử lý → xử lý ngay
+        AtomicBoolean flag = processed.get(round);
+        if (flag != null && !flag.get() && st.done1 && st.done2) {
+            if (flag.compareAndSet(false, true)) {
+                computeScore(st);
+                sendRoundResult(p1, p2, round, st);
+                sendRoundResult(p2, p1, round, st);
+            }
+        }
+    }
+
+    private void endMatch() {
+        String winner = null;
+        if (totalScore1 > totalScore2) winner = p1.userId();
+        else if (totalScore2 > totalScore1) winner = p2.userId();
+        else if (totalTime1 < totalTime2) winner = p1.userId();
+        else if (totalTime2 < totalTime1) winner = p2.userId();
+
+        if (winner != null)
+            matchDAO.setWinner(matchId, winner);
+
+        matchDAO.saveMatchDetail(p1.userId(), matchId, totalScore1, round4(totalTime1));
+        matchDAO.saveMatchDetail(p2.userId(), matchId, totalScore2, round4(totalTime2));
+
+        sendMatchResult(p1, totalScore1, totalTime1, winner);
+        sendMatchResult(p2, totalScore2, totalTime2, winner);
+
+        p1.setInGame(false, null);
+        p2.setInGame(false, null);
+        userDAO.setStatus(p1.userId(), Protocol.STATUS_ONLINE);
+        userDAO.setStatus(p2.userId(), Protocol.STATUS_ONLINE);
+
+        p1.broadcastOnline();
+        p2.broadcastOnline();
+    }
+
+    private void sendMatchResult(ClientHandler player, int score, double time, String winner) {
+        player.send(new Message(Protocol.MATCH_RESULT)
+                .put(Protocol.MATCH_ID, matchId)
+                .put(Protocol.TOTAL_SCORE, score)
+                .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(time)))
+                .put("winner", winner));
+    }
+
+    private double round4(double value) {
+        return Math.round(value * 10000.0) / 10000.0;
+    }
+
     public void playerQuit(String quitterId) {
         try {
             aborted = true;
@@ -189,52 +253,5 @@ public class GameRoom {
             p1.broadcastOnline();
             p2.broadcastOnline();
         }
-    }
-
-    private void endMatch() {
-        String winner = null;
-        if (totalScore1 > totalScore2) winner = p1.userId();
-        else if (totalScore2 > totalScore1) winner = p2.userId();
-        else if (totalTime1 < totalTime2) winner = p1.userId();
-        else if (totalTime2 < totalTime1) winner = p2.userId();
-
-        if (winner != null)
-            matchDAO.setWinner(matchId, winner);
-
-        matchDAO.saveMatchDetail(p1.userId(), matchId, totalScore1, round4(totalTime1));
-        matchDAO.saveMatchDetail(p2.userId(), matchId, totalScore2, round4(totalTime2));
-
-        sendMatchResult(p1, totalScore1, totalTime1, winner);
-        sendMatchResult(p2, totalScore2, totalTime2, winner);
-
-        p1.setInGame(false, null);
-        p2.setInGame(false, null);
-        userDAO.setStatus(p1.userId(), Protocol.STATUS_ONLINE);
-        userDAO.setStatus(p2.userId(), Protocol.STATUS_ONLINE);
-
-        p1.broadcastOnline();
-        p2.broadcastOnline();
-    }
-
-    private void sendMatchResult(ClientHandler player, int score, double time, String winner) {
-        player.send(new Message(Protocol.MATCH_RESULT)
-                .put(Protocol.MATCH_ID, matchId)
-                .put(Protocol.TOTAL_SCORE, score)
-                .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(time)))
-                .put("winner", winner));
-    }
-
-    private double round4(double value) {
-        return Math.round(value * 10000.0) / 10000.0;
-    }
-
-    public void submit(String userId, int round, String answer, double elapsed) {
-        RoundState st = rounds.get(round);
-        if (st == null) return;
-
-        double t = round4(elapsed);
-
-        if (userId.equals(p1.userId())) { st.ans1 = answer; st.t1 = t; st.done1 = true; }
-        if (userId.equals(p2.userId())) { st.ans2 = answer; st.t2 = t; st.done2 = true; }
     }
 }
