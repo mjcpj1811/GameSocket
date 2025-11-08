@@ -77,11 +77,9 @@ public class GameRoom {
             sendRoundStart(p1, round, seq, timeShow, timeInput);
             sendRoundStart(p2, round, seq, timeShow, timeInput);
 
-            // ⏳ Chờ người chơi nhập, vẫn tiếp tục nếu AFK
             waitForRound(round, timeShow + timeInput + 3);
             if (aborted) return;
 
-            // ✅ Đảm bảo chỉ xử lý 1 lần / vòng
             if (!processed.get(round).compareAndSet(false, true)) continue;
 
             RoundState rs = rounds.get(round);
