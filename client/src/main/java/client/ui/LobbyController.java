@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.layout.*;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
@@ -31,7 +32,7 @@ public class LobbyController {
 
         // Đặt Lobby làm listener chính
         conn.setMainListener(this::handle);
-        Session.get().lobbyListener = this::handle; // nếu cần tham chiếu
+        Session.get().lobbyListener = this::handle;
 
         lvOnline.setItems(online);
         lvOnline.setCellFactory(v -> new OnlineCell());
@@ -124,6 +125,7 @@ public class LobbyController {
         }
     }
 
+    /** Hiển thị mỗi người online kèm trạng thái và nút thách đấu */
     private class OnlineCell extends ListCell<Map<String,Object>> {
         @Override
         protected void updateItem(Map<String,Object> item, boolean empty) {
@@ -133,16 +135,34 @@ public class LobbyController {
                 setGraphic(null);
                 return;
             }
+
             String name = String.valueOf(item.get("username"));
-            Button b = new Button("Thách đấu");
-            b.getStyleClass().add("primary");
-            b.setOnAction(ev -> {
+            String status = String.valueOf(item.getOrDefault("status", "UNKNOWN"));
+
+            Label lblName = new Label(name);
+            lblName.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+
+            Label lblStatus = new Label(status);
+            lblStatus.setStyle("-fx-text-fill: " +
+                    ("INGAME".equals(status) ? "orange" :
+                            "ONLINE".equals(status) ? "green" : "gray") +
+                    "; -fx-font-size: 12px;");
+
+            Button btnChallenge = new Button("Thách đấu");
+            btnChallenge.getStyleClass().add("primary");
+            btnChallenge.setDisable("INGAME".equals(status));
+
+            btnChallenge.setOnAction(ev -> {
                 Session.get().opponentId = String.valueOf(item.get("id"));
                 conn.send(new Message(Protocol.CHALLENGE)
                         .put(Protocol.OPP, Session.get().opponentId));
             });
-            setText(name);
-            setGraphic(b);
+
+            HBox row = new HBox(10, lblName, lblStatus, btnChallenge);
+            row.setStyle("-fx-alignment: CENTER_LEFT; -fx-padding: 4 8;");
+
+            setGraphic(row);
+            setText(null);
         }
     }
 }

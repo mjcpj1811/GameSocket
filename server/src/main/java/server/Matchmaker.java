@@ -3,6 +3,7 @@ package server;
 import common.Message;
 import common.Protocol;
 
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.List;
@@ -30,5 +31,4 @@ public class Matchmaker {
     public ClientHandler findByUserId(String id) {
         return clients.get(id);
     }
-
 }

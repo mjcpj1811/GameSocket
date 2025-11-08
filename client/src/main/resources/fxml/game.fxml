@@ -41,7 +41,7 @@
             <TableColumn fx:id="colSeq" text="Chuỗi"/>
             <TableColumn fx:id="colYourAns" text="Của bạn"/>
             <TableColumn fx:id="colOppAns" text="Đối thủ"/>
-            <TableColumn fx:id="colScore" text="Tỉ số"/>
+            <TableColumn fx:id="colScore" text="Tỉ số(bạn-đối thủ)"/>
         </columns>
     </TableView>
     </VBox>

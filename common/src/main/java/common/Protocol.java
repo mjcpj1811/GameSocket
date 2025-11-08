@@ -55,6 +55,7 @@ public interface Protocol {
     String ENTRIES  = "entries";
     String HISTORY  = "history";
 
+
     String STATUS_ONLINE   = "ONLINE";
     String STATUS_OFFLINE  = "OFFLINE";
     String STATUS_INGAME   = "INGAME";
