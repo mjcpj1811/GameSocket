@@ -164,14 +164,17 @@ public class GameController {
             else result = "Bạn Thua!";
 
             msg = String.format("""
-                %-12s %-8s %-8s
-                Điểm        %d            %d
-                Thời gian   %.3fs        %.3fs
-
-                %s
-                """,
-                    "", "Bạn", oppName,
-                    yourScore, oppScore, yourTime, oppTime, result);
+        %s
+        ────────────────────
+        Bạn: 
+        ▸ Điểm: %-3d   ▸ Thời gian: %.3fs
+        Đối thủ (%s):
+        ▸ Điểm: %-3d   ▸ Thời gian: %.3fs
+        ─────────────────────
+        """,
+                    result,yourScore, yourTime,
+                    oppName, oppScore, oppTime
+                    );
         }
 
         Platform.runLater(() -> {
