@@ -197,12 +197,18 @@ public class GameRoom {
     }
 
     private void sendMatchResult(ClientHandler player, int score, double time, String winner) {
+        boolean isP1 = (player == p1);
+
         player.send(new Message(Protocol.MATCH_RESULT)
                 .put(Protocol.MATCH_ID, matchId)
-                .put(Protocol.TOTAL_SCORE, score)
-                .put(Protocol.TOTAL_TIME, String.format("%.4f", round4(time)))
+                .put("yourScore", isP1 ? totalScore1 : totalScore2)
+                .put("yourTime", String.format("%.4f", isP1 ? totalTime1 : totalTime2))
+                .put("oppScore", isP1 ? totalScore2 : totalScore1)
+                .put("oppTime", String.format("%.4f", isP1 ? totalTime2 : totalTime1))
+                .put("oppName", isP1 ? p2.username() : p1.username())
                 .put("winner", winner));
     }
+
 
     private double round4(double value) {
         return Math.round(value * 10000.0) / 10000.0;

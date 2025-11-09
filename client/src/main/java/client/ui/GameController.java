@@ -146,23 +146,33 @@ public class GameController {
 
     private void onMatchResult(Message m) {
         String info = (String) m.getPayload().getOrDefault("info", "");
-        int total = ((Number) m.getPayload().getOrDefault(Protocol.TOTAL_SCORE, 0)).intValue();
+        String oppName = (String) m.getPayload().getOrDefault("oppName", lblOpp.getText());
 
-        double tt = 0.0;
-        Object timeObj = m.getPayload().get(Protocol.TOTAL_TIME);
-        if (timeObj != null) {
-            try { tt = Double.parseDouble(timeObj.toString()); } catch (NumberFormatException ignored) {}
+        int yourScore = ((Number) m.getPayload().getOrDefault("yourScore", 0)).intValue();
+        int oppScore = ((Number) m.getPayload().getOrDefault("oppScore", 0)).intValue();
+        double yourTime = Double.parseDouble(m.getPayload().getOrDefault("yourTime", "0").toString());
+        double oppTime = Double.parseDouble(m.getPayload().getOrDefault("oppTime", "0").toString());
+        Object winner = m.getPayload().get("winner");
+
+        String msg;
+        if (!info.isEmpty()) {
+            msg = info;
+        } else {
+            String result;
+            if (winner == null) result = "Hòa!";
+            else if (winner.equals(Session.get().token)) result = "Bạn Thắng!";
+            else result = "Bạn Thua!";
+
+            msg = String.format("""
+                %-12s %-8s %-8s
+                Điểm        %d            %d
+                Thời gian   %.3fs        %.3fs
+
+                %s
+                """,
+                    "", "Bạn", oppName,
+                    yourScore, oppScore, yourTime, oppTime, result);
         }
-
-        Object win = m.getPayload().get("winner");
-
-        String msg = !info.isEmpty()
-                ? info
-                : "Tổng điểm: " + total +
-                "\nThời gian: " + String.format("%.4f", tt) + "s\n" +
-                (String.valueOf(win).equals(Session.get().token)
-                        ? "Bạn Thắng!"
-                        : "Bạn Thua.");
 
         Platform.runLater(() -> {
             Alert a = new Alert(Alert.AlertType.INFORMATION, msg, ButtonType.OK);
